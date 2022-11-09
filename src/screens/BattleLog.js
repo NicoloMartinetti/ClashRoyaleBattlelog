@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, FlatList, Image, Dimensions } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, FlatList, Image } from 'react-native';
 import moment from "moment";
 
 const getCharacters = async () => {
@@ -13,7 +13,7 @@ const getCharacters = async () => {
     return data;
 }
 
-export const BattleLog = () => {
+export const BattleLog = ({ navigation }) => {
     const [list, setList] = useState([]);
 
     useEffect(() => {
@@ -269,8 +269,6 @@ export const BattleLog = () => {
         </SafeAreaView>
     );
 }
-
-const dimensions = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
