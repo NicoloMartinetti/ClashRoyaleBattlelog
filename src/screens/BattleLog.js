@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, FlatList, Image, Dimensions } from 'react-native';
+import moment from "moment";
 
 const getCharacters = async () => {
     const response = await fetch('https://api.clashroyale.com/v1/players/%2380VG20G2/battlelog', {
         headers: new Headers({
-            Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6Ijk2MmZkZGY2LTE1MDctNDZiOS1hYmRkLTRkZWI0ODMwN2NlZCIsImlhdCI6MTY2NzU1NjQ1MCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyIyLjE5OS40MC4yMjQiXSwidHlwZSI6ImNsaWVudCJ9XX0.fWA2YwZ0inv-aBcsFv31H8kcbCOmobWDX-J2cvxQDLAGWPVOll135hgrGBln2NcEGoxAvxA-75TUiTXndUkKXA', 
+            Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkzMGVlODM5LTc4MmQtNDAzZi1iZDA2LWY4OTQ5MWQ1NjcwMiIsImlhdCI6MTY2NzM4MzA3MCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI5My4xNDYuMjI3LjIxMyJdLCJ0eXBlIjoiY2xpZW50In1dfQ.mFF4rafx57RsogbYS71HUwq8vv5SLc-Zc8rAdgLn3mp-Sm-xpC4dkg6KaajDcD2dYnEEXmHs0FPfCGO0Oow2Dg', 
         }),
     })
     const data = await response.json();
@@ -41,10 +42,66 @@ export const BattleLog = () => {
         } else { return '0' }
     }
 
+    const isLadderMyTC = (item) => {
+        if (item.gameMode.name == 'Ladder') {
+            if(item.team[0].trophyChange > 0)
+                return `+${item.team[0].trophyChange}`;
+            else
+                return item.team[0].trophyChange;
+        } else { return }
+    }
+
     const isLadderOpp = (item) => {
         if (item.gameMode.name == 'Ladder') {
             return item.opponent[0].startingTrophies;
         } else { return '0' }
+    }
+
+    const setDateElapsed = (item) => {
+        var secondsPast = 0;
+        var minsPast = 0;
+        var hoursPast = 0;
+        var daysPast = 0;
+
+        secondsPast = moment().utc().format("ss") - moment(item.battleTime).utc().format("ss");
+        if(secondsPast<0) {
+            minsPast = moment().utc().format("mm") - moment(item.battleTime).utc().format("mm") -1;
+            secondsPast = secondsPast + 60;
+        } else {
+            minsPast = moment().utc().format("mm") - moment(item.battleTime).utc().format("mm");
+        }
+        if(minsPast<0) {
+            hoursPast = moment().utc().format("HH") - moment(item.battleTime).utc().format("HH") -1;
+            minsPast = minsPast + 60;
+        } else {
+            hoursPast = moment().utc().format("HH") - moment(item.battleTime).utc().format("HH");
+        }
+        if(moment().utc().format("DD") != moment(item.battleTime).utc().format("DD")) {
+            hoursPast = hoursPast + 24;
+        }
+        if(hoursPast>23) {
+            daysPast = moment().utc().format("DD") - moment(item.battleTime).utc().format("DD")
+            hoursPast = hoursPast - 24;
+
+            if(moment().utc().format("MM") != moment(item.battleTime).utc().format("MM")) {
+                switch(moment(item.battleTime).utc().format("MM")) {
+                    case "02": 
+                        daysPast = daysPast + 28;
+                    case "04", "06", "09", "11":
+                        daysPast = daysPast + 30;
+                    default:
+                        daysPast = daysPast + 31;
+                }
+            }
+
+            return `${daysPast}d ${hoursPast}h ${minsPast}m`;
+        }
+
+        if(((moment().utc().format("MM") - moment(item.battleTime).utc().format("MM")) > 1 ) || daysPast > 30 || (moment().utc().format("YYYY") - moment(item.battleTime).utc().format("YYYY") > 0)) {
+            return "Too long ago";
+        }
+
+        return `${hoursPast}h ${minsPast}m ${secondsPast}s`;
     }
 
     const renderItem = useCallback(({ item }) => {
@@ -80,8 +137,11 @@ export const BattleLog = () => {
                         <View style = {styles.myInfo}>
                             <Text style = {{ fontWeight: 'bold' }}>{item.team[0].name}</Text>
                             <Text style = {{ fontWeight: '200', paddingTop: 5 }}>{checkMyClan(item)}</Text>
-                            <View style = {styles.trophies}>
-                                <Text style = {styles.trophiesText}>{isLadderMy(item)}</Text>
+                            <View style = {{flexDirection: 'row', alignItems: 'center'}}>
+                                <View style = {styles.trophies}>
+                                    <Text style = {styles.trophiesText}>{isLadderMy(item)}</Text>
+                                </View>
+                                <Text style = {styles.trophiesChange}>{isLadderMyTC(item)}</Text>
                             </View>
                         </View>
                         <View style = {styles.opponentInfo}>
@@ -142,6 +202,7 @@ export const BattleLog = () => {
                                 <Text style = {styles.levelCardsMy}>{'Lvl ' + (14 - item.team[0].cards[6].maxLevel + item.team[0].cards[6].level)}</Text>
                                 <Text style = {styles.levelCardsMy}>{'Lvl ' + (14 - item.team[0].cards[7].maxLevel + item.team[0].cards[7].level)}</Text>
                             </View>
+                            <Text style = {styles.timer}>{setDateElapsed(item)}</Text>
                         </View>
                         <View style = {styles.opponentDeck}>
                             <View style = {{ flexDirection: 'row' }}>
@@ -208,6 +269,8 @@ export const BattleLog = () => {
         </SafeAreaView>
     );
 }
+
+const dimensions = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
@@ -287,12 +350,12 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     cardImagesMy: {
-        height: 50,
+        height: 60,
         width: '23%',
         marginLeft: '1%',
     },
     cardImagesOpp: {
-        height: 50,
+        height: 60,
         width: '23%',
         marginRight: '1%',
     },
@@ -307,6 +370,18 @@ const styles = StyleSheet.create({
         width:'23%',
         textAlign: 'center',
         marginRight: '1%',
+    },
+    timer: {
+        marginTop: 10,
+        paddingHorizontal: 8,
+        fontSize: 12,
+        fontWeight: '200',
+    },
+    trophiesChange: {
+        marginTop: 5,
+        marginHorizontal: 10,
+        fontSize: 12,
+        fontWeight: '300',
     },
 });
 
