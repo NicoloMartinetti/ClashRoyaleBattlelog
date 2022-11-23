@@ -3,7 +3,8 @@ import { View, Text, SafeAreaView, StyleSheet, FlatList, Image } from 'react-nat
 import moment from "moment";
 
 var inGameTag = '80VG20G2';
-const apiToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkzMGVlODM5LTc4MmQtNDAzZi1iZDA2LWY4OTQ5MWQ1NjcwMiIsImlhdCI6MTY2NzM4MzA3MCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI5My4xNDYuMjI3LjIxMyJdLCJ0eXBlIjoiY2xpZW50In1dfQ.mFF4rafx57RsogbYS71HUwq8vv5SLc-Zc8rAdgLn3mp-Sm-xpC4dkg6KaajDcD2dYnEEXmHs0FPfCGO0Oow2Dg';
+const apiToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6ImQyOTIxMTQ0LWQ5NmQtNDRjNi05ZWJkLTRiNzJlNjQyN2FkYyIsImlhdCI6MTY2OTE5NDYwOCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyIxODUuMjguODEuMjIwIl0sInR5cGUiOiJjbGllbnQifV19.8MznSF8Xmuodxfq7UHI86TddJYmd_W1LM75uVzEYSZ9KheVuluUuuQo5089V86s0bbMHEzU_Dea_zG46OESVuA';
+const apiToken2 = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkzMGVlODM5LTc4MmQtNDAzZi1iZDA2LWY4OTQ5MWQ1NjcwMiIsImlhdCI6MTY2NzM4MzA3MCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI5My4xNDYuMjI3LjIxMyJdLCJ0eXBlIjoiY2xpZW50In1dfQ.mFF4rafx57RsogbYS71HUwq8vv5SLc-Zc8rAdgLn3mp-Sm-xpC4dkg6KaajDcD2dYnEEXmHs0FPfCGO0Oow2Dg';
 
 const getCharacters = async () => {
     const response = await fetch(`https://api.clashroyale.com/v1/players/%23${inGameTag}/battlelog`, {
@@ -22,22 +23,6 @@ export const BattleLog = ({ navigation }) => {
     useEffect(() => {
         getCharacters().then(setList);
     }, []);
-
-    const checkMyClan = (item) => {
-        if (item.team[0].clan != undefined) {
-            return item.team[0].clan.name;
-        } else {
-            return '';
-        }
-    };
-
-    const checkOpponentClan = (item) => {
-        if (item.opponent[0].clan != undefined) {
-            return item.opponent[0].clan.name;
-        } else {
-            return '';
-        }
-    };
 
     const isLadderMy = (item) => {
         if (item.gameMode.name == 'Ladder') {
@@ -139,7 +124,7 @@ export const BattleLog = ({ navigation }) => {
                     <View style = {{ flexDirection: 'row' }}>
                         <View style = {styles.myInfo}>
                             <Text style = {{ fontWeight: 'bold' }}>{item.team[0].name}</Text>
-                            <Text style = {{ fontWeight: '200', paddingTop: 5 }}>{checkMyClan(item)}</Text>
+                            <Text style = {{ fontWeight: '200', paddingTop: 5 }}>{item.team[0].clan?.name}</Text>
                             <View style = {{flexDirection: 'row', alignItems: 'center'}}>
                                 <View style = {styles.trophies}>
                                     <Text style = {styles.trophiesText}>{isLadderMy(item)}</Text>
@@ -149,7 +134,7 @@ export const BattleLog = ({ navigation }) => {
                         </View>
                         <View style = {styles.opponentInfo}>
                             <Text style = {{ fontWeight: 'bold' }}>{item.opponent[0].name}</Text>
-                            <Text style = {{ fontWeight: '200', paddingTop: 5 }}>{checkOpponentClan(item)}</Text>
+                            <Text style = {{ fontWeight: '200', paddingTop: 5 }}>{item.opponent[0].clan?.name}</Text>
                             <View style = {styles.trophies}>
                                 <Text style = {styles.trophiesText}>{isLadderOpp(item)}</Text>
                             </View>
@@ -353,11 +338,13 @@ const styles = StyleSheet.create({
     cardImagesMy: {
         height: 60,
         width: '23%',
+        resizeMode: 'contain',
         marginLeft: '1%',
     },
     cardImagesOpp: {
         height: 60,
         width: '23%',
+        resizeMode: 'contain',
         marginRight: '1%',
     },
     levelCardsMy: {
