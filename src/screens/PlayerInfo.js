@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, View, Text, Image, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, Image, FlatList, StyleSheet } from 'react-native';
 
 var inGameTag = '80VG20G2';
 const apiToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6ImQyOTIxMTQ0LWQ5NmQtNDRjNi05ZWJkLTRiNzJlNjQyN2FkYyIsImlhdCI6MTY2OTE5NDYwOCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyIxODUuMjguODEuMjIwIl0sInR5cGUiOiJjbGllbnQifV19.8MznSF8Xmuodxfq7UHI86TddJYmd_W1LM75uVzEYSZ9KheVuluUuuQo5089V86s0bbMHEzU_Dea_zG46OESVuA';
@@ -23,13 +23,16 @@ export const PlayerInfo = ({ navigation }) => {
         getCharactersInfo().then(setList);
     }, []);
 
-    const checkClan = (item) => {
-        if (item.clan != undefined) {
-            return item.clan.name;
-        } else {
-            return '';
-        }
-    };
+    const badges = list?.badges;
+
+    const renderItem = useCallback(({ item }) => {
+        return(
+            <Image
+                style = {styles.badge}
+                source = {{ uri: item?.iconUrls?.large }}
+            />
+        );
+    }, []);
 
     return(
         <SafeAreaView style={styles.container}>
@@ -56,11 +59,11 @@ export const PlayerInfo = ({ navigation }) => {
                     </View>
                     <View style={{flexDirection: 'row', marginTop: 25}}>
                         <Text>Trophies:</Text>
-                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics.previousSeason?.trophies}</Text>
+                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics?.previousSeason?.trophies}</Text>
                     </View>
                     <View style={{flexDirection: 'row', marginTop: 10}}>
                         <Text>Rank:       </Text>
-                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics.previousSeason?.rank}</Text>
+                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics?.previousSeason?.rank}</Text>
                     </View>
                 </View>
                 <View style={{width: 1, backgroundColor: 'grey', marginVertical: 10}}></View>
@@ -70,15 +73,20 @@ export const PlayerInfo = ({ navigation }) => {
                     </View>
                     <View style={{flexDirection: 'row', marginTop: 25}}>
                         <Text>Trophies:</Text>
-                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics.bestSeason?.trophies}</Text>
+                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics?.bestSeason?.trophies}</Text>
                     </View>
                     <View style={{flexDirection: 'row', marginTop: 10}}>
                         <Text>Rank:       </Text>
-                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics.bestSeason?.rank}</Text>
+                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics?.bestSeason?.rank}</Text>
                     </View>
                 </View>
             </View>
             <View style={{height: 1, backgroundColor: 'grey', marginHorizontal: 10}}></View>
+            <FlatList
+                data={badges}
+                renderItem={renderItem}
+                numColumns={4}
+            />
         </SafeAreaView>
     );
 }
@@ -124,6 +132,12 @@ const styles = StyleSheet.create({
     },
     clanRole:{
         fontStyle: 'italic',
+    },
+    badge: {
+        height: 90,
+        width: '23%',
+        resizeMode: 'contain',
+        marginLeft: '1%',
     },
 });
 
