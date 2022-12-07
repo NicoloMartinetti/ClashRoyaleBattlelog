@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { SafeAreaView, View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 
+// Necessario crearsi un Bearer Token sul sito https://developer.clashroyale.com per accedere alle API
 var id = '';
 const apiToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkzMGVlODM5LTc4MmQtNDAzZi1iZDA2LWY4OTQ5MWQ1NjcwMiIsImlhdCI6MTY2NzM4MzA3MCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI5My4xNDYuMjI3LjIxMyJdLCJ0eXBlIjoiY2xpZW50In1dfQ.mFF4rafx57RsogbYS71HUwq8vv5SLc-Zc8rAdgLn3mp-Sm-xpC4dkg6KaajDcD2dYnEEXmHs0FPfCGO0Oow2Dg';
 const apiToken2 = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY4MGMwZjRkLTg2YmEtNGNjNS1hZjQ2LThkZjg5MmVkOWQ5NyIsImlhdCI6MTY3MDQwMjY4Mywic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyIxNzguMjU1LjE4Ny4yNDQiXSwidHlwZSI6ImNsaWVudCJ9XX0.3mdWVe5YB5QfSzeWtwbNK93f6Y8LZ73M43WnD7JE8c8XYg0t4DYBMpkh_tnN3qNRc2kt-Adpi_5DTQK0pAOE1w';
@@ -9,7 +10,7 @@ const apiToken2 = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOG
 const getCharactersInfo = async () => {
     const response = await fetch(`https://api.clashroyale.com/v1/players/%23${id}`, {
         headers: new Headers({
-            Authorization: `${apiToken2}`, 
+            Authorization: `${apiToken}`, 
         }),
     })
     const data = await response.json();
@@ -72,7 +73,7 @@ export const Detail = ({ navigation, route }) => {
                     </View>
                     <View style={{flexDirection: 'row', marginTop: 10}}>
                         <Text>Rank:       </Text>
-                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics?.previousSeason?.rank}</Text>
+                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics?.previousSeason?.rank ? list.leagueStatistics?.previousSeason?.rank : '-'}</Text>
                     </View>
                 </View>
                 <View style={{width: 1, backgroundColor: 'grey', marginVertical: 10}}></View>
@@ -86,7 +87,7 @@ export const Detail = ({ navigation, route }) => {
                     </View>
                     <View style={{flexDirection: 'row', marginTop: 10}}>
                         <Text>Rank:       </Text>
-                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics?.bestSeason?.rank}</Text>
+                        <Text style={{width: '50%', textAlign: 'right'}}>{list.leagueStatistics?.bestSeason?.rank ? list.leagueStatistics?.bestSeason?.rank: '-'}</Text>
                     </View>
                 </View>
             </View>
