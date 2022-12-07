@@ -1,20 +1,18 @@
 import React from 'react';
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import BattleLog from '../screens/BattleLog';
-import Detail from './DetailStack';
+import Detail from '../screens/Detail';
 
 const Stack = createNativeStackNavigator();
 
-export const BattleLogStack = () => {
+export const DetailStack = () => {
     return (
         <Stack.Navigator
             screenOptions={{
                 headerShown: false,
             }}>
-            <Stack.Screen name="BattleLog" component={BattleLog} />
             <Stack.Screen name="Detail" component={Detail} />
         </Stack.Navigator>
     );
 };
 
-export default BattleLogStack;
+export default Detail;

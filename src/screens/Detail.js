@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { SafeAreaView, View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, Image, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import {Ionicons} from '@expo/vector-icons';
 
-var inGameTag = '80VG20G2';
+var id = '';
 const apiToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkzMGVlODM5LTc4MmQtNDAzZi1iZDA2LWY4OTQ5MWQ1NjcwMiIsImlhdCI6MTY2NzM4MzA3MCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI5My4xNDYuMjI3LjIxMyJdLCJ0eXBlIjoiY2xpZW50In1dfQ.mFF4rafx57RsogbYS71HUwq8vv5SLc-Zc8rAdgLn3mp-Sm-xpC4dkg6KaajDcD2dYnEEXmHs0FPfCGO0Oow2Dg';
 const apiToken2 = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY4MGMwZjRkLTg2YmEtNGNjNS1hZjQ2LThkZjg5MmVkOWQ5NyIsImlhdCI6MTY3MDQwMjY4Mywic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyIxNzguMjU1LjE4Ny4yNDQiXSwidHlwZSI6ImNsaWVudCJ9XX0.3mdWVe5YB5QfSzeWtwbNK93f6Y8LZ73M43WnD7JE8c8XYg0t4DYBMpkh_tnN3qNRc2kt-Adpi_5DTQK0pAOE1w';
 
 const getCharactersInfo = async () => {
-    const response = await fetch(`https://api.clashroyale.com/v1/players/%23${inGameTag}`, {
+    const response = await fetch(`https://api.clashroyale.com/v1/players/%23${id}`, {
         headers: new Headers({
             Authorization: `${apiToken2}`, 
         }),
@@ -16,8 +17,10 @@ const getCharactersInfo = async () => {
     return data;
 }
 
-export const PlayerInfo = ({ navigation }) => {
+export const Detail = ({ navigation, route }) => {
     const [list, setList] = useState({});
+    const {inGameTag} = route.params;
+    id = inGameTag.substring(1);
 
     useEffect(() => {
         getCharactersInfo().then(setList);
@@ -36,6 +39,12 @@ export const PlayerInfo = ({ navigation }) => {
 
     return(
         <SafeAreaView style={styles.container}>
+            <TouchableOpacity
+                style={styles.backArrow}
+                onPress={() => navigation.goBack()}
+            >
+                <Ionicons name="close" size={30} color="black" />
+            </TouchableOpacity>
             <Text style={styles.playerName}>{list.name}</Text>
             <Text style={styles.playerTag}>{list.tag}</Text>
             <View style={{flexDirection: 'row'}}>
@@ -139,6 +148,12 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         marginLeft: '1%',
     },
+    backArrow: {
+        height: 31,
+        widtgh: 31,
+        position: 'absolute',
+        right: 10,
+    },
 });
 
-export default PlayerInfo;
+export default Detail;

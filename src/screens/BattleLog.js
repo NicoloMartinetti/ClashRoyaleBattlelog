@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import moment from "moment";
 
 var inGameTag = '80VG20G2';
-const apiToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6ImQyOTIxMTQ0LWQ5NmQtNDRjNi05ZWJkLTRiNzJlNjQyN2FkYyIsImlhdCI6MTY2OTE5NDYwOCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyIxODUuMjguODEuMjIwIl0sInR5cGUiOiJjbGllbnQifV19.8MznSF8Xmuodxfq7UHI86TddJYmd_W1LM75uVzEYSZ9KheVuluUuuQo5089V86s0bbMHEzU_Dea_zG46OESVuA';
-const apiToken2 = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkzMGVlODM5LTc4MmQtNDAzZi1iZDA2LWY4OTQ5MWQ1NjcwMiIsImlhdCI6MTY2NzM4MzA3MCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI5My4xNDYuMjI3LjIxMyJdLCJ0eXBlIjoiY2xpZW50In1dfQ.mFF4rafx57RsogbYS71HUwq8vv5SLc-Zc8rAdgLn3mp-Sm-xpC4dkg6KaajDcD2dYnEEXmHs0FPfCGO0Oow2Dg';
+const apiToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkzMGVlODM5LTc4MmQtNDAzZi1iZDA2LWY4OTQ5MWQ1NjcwMiIsImlhdCI6MTY2NzM4MzA3MCwic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyI5My4xNDYuMjI3LjIxMyJdLCJ0eXBlIjoiY2xpZW50In1dfQ.mFF4rafx57RsogbYS71HUwq8vv5SLc-Zc8rAdgLn3mp-Sm-xpC4dkg6KaajDcD2dYnEEXmHs0FPfCGO0Oow2Dg';
+const apiToken2 = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjY4MGMwZjRkLTg2YmEtNGNjNS1hZjQ2LThkZjg5MmVkOWQ5NyIsImlhdCI6MTY3MDQwMjY4Mywic3ViIjoiZGV2ZWxvcGVyLzcxZjI1YmUxLWQ4OGEtNGQwZi1lMDNlLTY4M2VkOTQ4NTYzNSIsInNjb3BlcyI6WyJyb3lhbGUiXSwibGltaXRzIjpbeyJ0aWVyIjoiZGV2ZWxvcGVyL3NpbHZlciIsInR5cGUiOiJ0aHJvdHRsaW5nIn0seyJjaWRycyI6WyIxNzguMjU1LjE4Ny4yNDQiXSwidHlwZSI6ImNsaWVudCJ9XX0.3mdWVe5YB5QfSzeWtwbNK93f6Y8LZ73M43WnD7JE8c8XYg0t4DYBMpkh_tnN3qNRc2kt-Adpi_5DTQK0pAOE1w';
 
 const getCharacters = async () => {
     const response = await fetch(`https://api.clashroyale.com/v1/players/%23${inGameTag}/battlelog`, {
         headers: new Headers({
-            Authorization: `${apiToken}`, 
+            Authorization: `${apiToken2}`, 
         }),
     })
     const data = await response.json();
@@ -133,7 +133,11 @@ export const BattleLog = ({ navigation }) => {
                             </View>
                         </View>
                         <View style = {styles.opponentInfo}>
-                            <Text style = {{ fontWeight: 'bold' }}>{item.opponent[0].name}</Text>
+                            <TouchableOpacity
+                                onPress={() => {navigation.navigate("Detail", {inGameTag: item.opponent[0].tag})}}
+                            >
+                                <Text style = {{ fontWeight: 'bold' }}>{item.opponent[0].name}</Text>
+                            </TouchableOpacity>
                             <Text style = {{ fontWeight: '200', paddingTop: 5 }}>{item.opponent[0].clan?.name}</Text>
                             <View style = {styles.trophies}>
                                 <Text style = {styles.trophiesText}>{isLadderOpp(item)}</Text>
